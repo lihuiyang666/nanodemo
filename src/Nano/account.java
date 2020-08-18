@@ -115,27 +115,30 @@ public class account {
             this.ownBlockchain.add(a);
             this.balance-=amount;
            //如果目标账户未开户，对目标账户中使用此交易开户
-            if (des.ownBlockchain.isEmpty()){
-                des.openTransaction(this,amount);
-
-            }
-            //如果目标账户已开户，将receiveBlock添加到目标账户区块链中
-            else {
-                receiveBlock r=new receiveBlock();
-                r.previous=des.ownBlockchain.getLast().hash;
-                r.source=a.hash;
-                r.work=amount;
-                r.signature=a.signature;
-                r.hash=r.calculateHash();
-                des.ownBlockchain.add(r);
-                des.balance+=amount;
-
-
-            }
 
 
 
 
+
+        }
+
+
+    }
+    //将接受交易与发送交易分开，如果没开户，进行开户。
+    void receiveTransaction(account source,int amount){
+        if(ownBlockchain.isEmpty()){
+            openTransaction(source,amount);
+
+        }
+        else {
+            receiveBlock r = new receiveBlock();
+            r.previous = this.ownBlockchain.getLast().hash;
+            r.source = source.ownBlockchain.getLast().hash;
+            r.work = amount;
+            r.signature = source.ownBlockchain.getLast().signature;
+            r.hash = r.calculateHash();
+            this.ownBlockchain.add(r);
+            this.balance += amount;
         }
 
 
