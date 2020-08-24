@@ -16,6 +16,6 @@ public class exam3 {
         System.out.println(block1);
         b.receiveTransaction(a,block1,10);
         System.out.println(b.ownBlockchain);
-        System.out.println(b.balance);
+       
     }
 }

@@ -73,7 +73,7 @@ public class account {
         this.ownBlockchain.add(a);
         this.representNum=1;
         this.representAddress=this.address;
-        genesis.genesisAccount.add(this.address);
+        genesis.genesisAccount.add(this);
         }
 
 
@@ -96,7 +96,7 @@ public class account {
             this.representAddress=source.address;
             //发送交易方代表权重加1
             source.representNum++;
-            genesis.genesisAccount.add(this.address);
+            genesis.genesisAccount.add(this);
         }
     }
     //发送交易函数
