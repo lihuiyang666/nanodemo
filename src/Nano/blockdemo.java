@@ -1,4 +1,7 @@
 package Nano;
+
+import com.google.gson.annotations.Expose;
+
 abstract class Block {
     public String hash;
 
@@ -6,33 +9,21 @@ abstract class Block {
         open, send, receive, change
     }
     int work;
-    type own;
     String signature;
 
-    @Override
-    public String toString() {
-        return "Block{" +
-                "hash='" + hash + '\'' +
-                ", work=" + work +
-                ", own=" + own +
-                ", signature='" + signature + '\'' +
-                '}';
-    }
+
 }
 class openBlock extends Block{
     String address;
     String representative;
-
+    final type own=type.open;
     String calculateHash(){
         String s=StringUtil.applySha256(this.address+this.representative
                 +Integer.toString(work) +this.own.toString()+this.signature);
         return s;
 
     }
-    openBlock(){
-        own=type.open;
 
-    }
 
     @Override
     public String toString() {

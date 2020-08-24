@@ -40,7 +40,7 @@ public class account {
         }
     }
     String signature;
-     public int balance;//余额
+    @Expose public int balance;//余额
 
     //作为代表的权重，默认为0
     @Expose public int representNum=0;
@@ -100,7 +100,7 @@ public class account {
         }
     }
     //发送交易函数
-    void sendTransaction(account des,int amount){
+    sendBlock sendTransaction(account des,int amount){
         if (ownBlockchain.isEmpty())
             throw new RuntimeException();
         else{
@@ -114,6 +114,7 @@ public class account {
             a.hash=a.calculateHash();
             this.ownBlockchain.add(a);
             this.balance-=amount;
+            return a;
            //如果目标账户未开户，对目标账户中使用此交易开户
 
 
@@ -125,7 +126,7 @@ public class account {
 
     }
     //将接受交易与发送交易分开，如果没开户，进行开户。
-    void receiveTransaction(account source,int amount){
+    void receiveTransaction(account source,sendBlock block,int amount){
         if(ownBlockchain.isEmpty()){
             openTransaction(source,amount);
 
@@ -133,9 +134,9 @@ public class account {
         else {
             receiveBlock r = new receiveBlock();
             r.previous = this.ownBlockchain.getLast().hash;
-            r.source = source.ownBlockchain.getLast().hash;
+            r.source = block.hash;
             r.work = amount;
-            r.signature = source.ownBlockchain.getLast().signature;
+            r.signature = block.signature;
             r.hash = r.calculateHash();
             this.ownBlockchain.add(r);
             this.balance += amount;

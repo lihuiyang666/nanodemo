@@ -15,9 +15,9 @@ public class rundemo {
 
         account a=new account();
         a.openTransaction();
-        Gson json=new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        String s=json.toJson(a);
-        System.out.println(s);
+        DatagramSocket ds=new DatagramSocket(10001);
+        new Thread(new Send(ds,10002,a)).start();
+        new Thread(new Receive(ds,a)).start();
 
 
 

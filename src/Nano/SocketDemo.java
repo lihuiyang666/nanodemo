@@ -1,5 +1,8 @@
 package Nano;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.DatagramPacket;
@@ -23,10 +26,19 @@ class Send implements Runnable{
         try{
             BufferedReader bufr =new BufferedReader(new InputStreamReader(System.in));
             String line =null;
+            //输入要交易的数量
             while ((line=bufr.readLine())!=null){
                 if ("stop".equals(line))
                     break;
-                a.sendTransaction(new account(),100);
+                //此账户发送交易
+                sendBlock block=a.sendTransaction(new account(),Integer.parseInt(line));
+
+                //将账户信息一起发送给对方
+                Gson json=new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+                Gson json2=new Gson();
+                String s=json.toJson(a);
+                String bl=json2.toJson(block);
+                line=line+" "+s+" "+bl;
                 byte[] buf =line.getBytes();
 
                 DatagramPacket dp=new DatagramPacket(buf,buf.length, InetAddress.getLocalHost(),port);
@@ -59,7 +71,13 @@ class Receive implements Runnable{
 
                 String ip=dp.getAddress().getHostAddress();
                 String data=new String(dp.getData(),0,dp.getLength());
-                System.out.println(ip+":"+data);
+                String[] ss=data.split(" ");
+                Gson json=new Gson();
+                int amount=Integer.parseInt(ss[0]);
+                account sou=json.fromJson(ss[1],account.class);
+                sendBlock block=json.fromJson(ss[2],sendBlock.class);
+                this.a.receiveTransaction(sou,block,amount);
+                System.out.println(ip+":"+data+ss[0]+" "+ss[1]);
 
             }
 
